@@ -1,0 +1,9 @@
+{
+  "name": "student-sign-in-api",
+  "description": "Vue and Express API Student Sign in App",
+  "author": "Nick",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
