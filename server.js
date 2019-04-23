@@ -2,17 +2,35 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var Sequelize = require('sequelize');
 var api_routes = require('./routes/api.js');
+var path = require('path');
 
-// Database configuration
-sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: './db.sqlite3'
-});
+db_url = process.env.DATABASE_URL;
 
-// Verify Connection to database
-sequelize.authenticate()
-    .then(() => console.log('connected to sqlite'))
-    .catch(err => console.log('error connecting', err));
+let sequelize;
+
+// if there is a database url environment available that means its running on heroku; thus, connect to postgres
+// otherwise run locally on SQLite
+if (db_url){
+    sequelize = new Sequelize(db_url, {
+        dialect: 'postgres',
+    });
+
+    sequelize.authenticate()
+        .then(() => console.log('connected to Postgres'))
+        .catch(err => console.log(err))
+}
+else{
+    // Database configuration
+    sequelize = new Sequelize({
+        dialect: 'sqlite',
+        storage: './db.sqlite3'
+    });
+
+    // Verify Connection to database
+    sequelize.authenticate()
+        .then(() => console.log('connected to sqlite'))
+        .catch(err => console.log('error connecting', err));
+}
 
 // initialize student model
 let student = require('./model/student.js')(sequelize, Sequelize);
@@ -20,6 +38,9 @@ let student = require('./model/student.js')(sequelize, Sequelize);
 // app config
 var app = express();
 app.use(bodyParser.json());
+
+// Serve static files from /dist directory
+app.use(express.static(path.join(__dirname, 'student-sign-in-client', 'dist')));
 
 app.use('/api', api_routes(student));
 
