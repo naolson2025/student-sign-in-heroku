@@ -35,6 +35,9 @@ export default {
       // call the addStudent method in StudentService.js, when complete call updateStudents to update the student array
       this.$student_api.addStudent(student).then(student => {
         this.updateStudents()
+      }).catch(err => {
+          let msg = err.response.data.join(', ');
+          alert('Error adding student.\n' + msg)
       })
     },
     studentArrivedOrLeft(student){

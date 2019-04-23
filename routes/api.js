@@ -30,12 +30,22 @@ module.exports = function (Student) {
         Student.update(
             req.body, {where:{id: req.params.id}})
         .then((rowsModified)=>{
-            return res.send('ok')
+            if (!rowsModified[0]){
+                return res.status(404).send('Not found')
+            } else {
+                return res.send('ok')
+            }
+        }).catch(err =>{
+            if (err instanceof Sequelize.ValidationError){
+                let message = err.errors.map((e) => e.message);
+                return res.status(500).json(message)
+            }
+            return next(err)
         })
     });
 
     router.delete('/students/:id', function (req, res, next) {
-        Student.destroy({where: {id: req.params.id}}).then(() =>{
+        Student.destroy({where: {id: req.params.id}}).then( rowsModified =>{
             return res.send('ok')
         }).catch(err => next(err))
     });
