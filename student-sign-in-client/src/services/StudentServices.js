@@ -13,6 +13,19 @@ export default {
         return axios.post(base_url, student).then(response =>{
             return response.data
         })
+    },
+
+    // use the student object id to create the url with id at the end
+    updateStudent(student){
+        return axios.patch(`${base_url}/${student.id}`, student).then(response =>{
+            return response.data
+        })
+    },
+
+    deleteStudent(id) {
+      return axios.delete(`${base_url}/${id}`).then(response =>{
+          return response.data
+      })
     }
 
 }

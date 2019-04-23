@@ -38,10 +38,17 @@ export default {
       })
     },
     studentArrivedOrLeft(student){
-
+        // call the updateStudent method from StudentService.js
+        this.$student_api.updateStudent(student).then(() =>{
+            this.message = student.present ? 'Welcome, ' : 'Goodbye, ';
+            this.name = student.name;
+            this.updateStudents()
+        })
     },
     studentDeleted(student){
-
+        this.$student_api.deleteStudent(student.id).then(() =>{
+            this.updateStudents()
+        })
     },
     updateStudents(){
       this.$student_api.getAllStudents().then(students =>{
